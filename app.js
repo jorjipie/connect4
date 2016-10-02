@@ -5,6 +5,10 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var mongo = require('mongodb')
+var monk = require('monk')
+var db = monk('localhost:27017/connect4')
+
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
@@ -22,6 +26,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/jquery', express.static(path.join(__dirname, '/node_modules/jquery/dist/')));
+//make the db accessible to the router.
+app.use(function(req,res,next) {
+  req.db = db;
+  next();
+});
 
 app.use('/', routes);
 app.use('/users', users);

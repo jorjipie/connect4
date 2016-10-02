@@ -13,18 +13,8 @@ socket.on('receivePlay', function (play) {
 
 });
 
-
 function drop(col) {
   socket.emit('play', {'column': col});
-  /*
-  $.post('/play', {'column': col},
-    function (data)
-    {
-      console.log(data)
-    }
-  );
-  location.reload();
-  */
 }
 
 function clearBoard() {

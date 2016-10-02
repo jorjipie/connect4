@@ -54,6 +54,7 @@ router.get('/',
     ); // find
   }
 ); //router.get
+
 router.get('/userlist', function(req,res) {
   var db = req.db;
   var collection = db.get('usercollection');
@@ -80,6 +81,7 @@ router.post('/play', function(req,res) {
   }
   var browser = 'Chrome';
   var collection = db.get('gameboard');
+  var winchecker = require('../winchecker.js');
   collection.find(
     { 'column': column},
     { 'sort': {'row': -1}, limit: 1 },
@@ -104,12 +106,23 @@ router.post('/play', function(req,res) {
           }
           else
           {
+            collection.find({}, {}, function (e, result) {
+              win = winchecker.check(result);
+            });
             res.json(doc);
           }
         }
       );
     }
   );
+});
+router.post('/ClearTheBoard', function (req, res) {
+  var board = req.db.get('gameboard');
+  board.remove({}, function (err) {
+    console.log(err);
+    res.send("done.");
+  });
+
 });
 router.post('/adduser', function (req,res) {
   var db = req.db;

@@ -1,8 +1,9 @@
 module.exports = function(io) {
-  var mongo = require('mongodb')
-  var monk = require('monk')
-  var db = monk('localhost:27017/connect4')
+  var mongo = require('mongodb');
+  var monk = require('monk');
+  var db = monk('localhost:27017/connect4');
   var board = db.get('gameboard');
+  var winchecker = require('./winchecker.js');
   io.sockets.on('connection', function (socket)
   {
 
@@ -13,6 +14,7 @@ module.exports = function(io) {
         console.log('unable to drop.');
         return false;
       }
+      // equivalent to sql's select top order by. Get the highest column value.
       board.find(
         { 'column': data.column },
         {'sort': {'row': -1}, limit: 1},
@@ -29,13 +31,21 @@ module.exports = function(io) {
             return false;
           }
           console.log("Inserting at row " + insertRow, ", column " + data.column);
-          var SuccessfulPlay = {'row': insertRow, 'column': data.column, 'agent': 'Chrome'}
+          var SuccessfulPlay = {
+            'row': insertRow,
+            'column': data.column,
+            'agent': 'Chrome'
+          };
           board.insert(SuccessfulPlay, function (err, doc) {
             if (err) {
               console.log("there was a problem adding this crap.");
             }
             else {
               console.log("Successfully inserted.")
+              board.find({},{}, function (e, docs) {
+                console.log(docs);
+                winchecker.check(docs);
+              });
             };
           });
           io.emit('receivePlay', SuccessfulPlay);
