@@ -1,57 +1,105 @@
-exports.check = function (docs) {
-  var Horizontals = [];
-  var Verticals = [];
-  var Diagonals = [];
+exports.check = function (docs, newPiece) {
+  var result = { win: false, agent: "", places: []};
+  var checkIndex = 0;
+  var searchIndex = 0;
 
-  var result = { win: false, browser: "", places = []};
-  //Check for things with the same thing next to them.
-  for (int i = 0; i < docs.length; i++) {
-
-    //Check to see if there's one to the right or left, and not already in the array.
-      //If so, add to the horizontal array.
-    var checkResult = CheckHorizontal(docs, i, "left")
-    if (checkResult.Match === true)
-    {
-      Horizontals.push([
-        { row: docs[i].row, column: docs[i].column },
-        { row: checkResult.Result.row, column: checkResult.Result.column }
-      ]);
-    }
-    checkresult = CheckHorizontal(docs, i, "right");
-    if (checkResult.Match === true)
-    {
-      Horizontals.push([
-        { row: docs[i].row, column: docs[i].column },
-        { row: checkResult.Result.row, column: checkResult.Result.column }
-      ]);
-    }
-
+  if (docs.length < 4) {
+    console.log("Not possible to have a win with " + docs.length + " pieces.");
+    return result;
   }
-  //Check to see if there's one up or down. If so, add to the verticals array.
+  //dealing with a 2D array is easier than 1D for things that are 2D.
+  //Obvious code is obvious.
+  var buildTo2D = function(jsonArray, width, height) {
+    //[row][column];
+    var Array = function(length) {
+      var output = [];
+      for (var i = 0; i < length; i++)
+      {
+        output.push('');
+      }
+      return output;
+    };
+    var result = Array(width);
+    for (var i = 0; i < width; i++) {
+      result[i] = Array(height);
+    }
+    for (i = 0; i < jsonArray.length; i++) {
+      if (jsonArray[i].row != undefined
+        && jsonArray[i].column != undefined
+        && jsonArray[i].agent != undefined)
+      {
+        result[jsonArray[i].row][jsonArray[i].column] = jsonArray[i].agent
+      }
+    }
+    return result;
+  }
+  var board = buildTo2D(docs, 7, 6);
+  //check left
+  var success = true;
+  var lastPiece = newPiece;
+  var winningPieces = [lastPiece];
+  while (success === true && lastPiece.column > 0 && winningPieces.length < 5) {
+    console.log("checking left")
+    if (board[newPiece.row][lastPiece.column-1] === newPiece.agent)
+    {
+      lastPiece.column--;
+      winningPieces.push(lastPiece);
+      console.log(winningPieces.length);
+    }
+    else { success = false; }
+  }
+  if (winningPieces.length >= 4) {
+    console.log("WINNNER!!!");
+    result.win = true;
+    result.agent = newPiece.agent;
+    result.places = winningPieces;
+    return result;
+  }
+  //check right
+  success = true;
+  lastPiece = newPiece;
+  while (success === true && lastPiece.column < 6 && winningPieces.length < 5) {
+    if (newPiece.agent === board[newPiece.row][lastPiece.column+1])
+    {
+      lastPiece.column++;
+      winningPieces.push(lastPiece);
+    }
+    else { success = false;}
+  }
+  //return if there's a win.
+  if (winningPieces.length >= 4) {
+    console.log("WINNNER!!!");
+    result.win = true;
+    result.agent = newPiece.agent;
+    result.places = winningPieces;
+    return result;
+  }
 
-  //Check to see if there are any diagonals. If so, add to the Diagonals array.
-
-  //Check for matches of 3 in a row horizontal.
-
-  //Check for matches of 3 in a row vertical.
-
-  //Check for matches of 3 in a row diagonal.
-
-  //Check for matches of 3 in a row horizontal.
-
-  //Check for matches of 3 in a row diagonal.
-
-  //Check for matches of 3 in a row vertical.
-
+  //check down.
+  if (newPiece.row > 2)
+  {
+    success = true;
+    lastPiece = newPiece;
+    winningPieces = [lastPiece];
+    console.log("checking down");
+    while (success === true && winningPieces.length < 5 && lastPiece.row > 0)
+    {
+      if (newPiece.agent === board[lastPiece.row-1][newPiece.column])
+      {
+        lastPiece.row--;
+        winningPieces.push(lastPiece);
+      }
+      else { success == false; }
+    }
+    if (winningPieces.length >= 4)
+    {
+      console.log("WINNNER!!!");
+      result.win = true;
+      result.agent = newPiece.agent;
+      result.places = winningPieces;
+      return result;
+    }
+  }
 
   return result;
 };
-function CheckHorizontal (docs, index, direction) {
-  if (direction === "left")
-  {
-    if (docs[index].column === 0)
-    {
-      return false;
-    }
-  }
-}

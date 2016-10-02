@@ -43,8 +43,8 @@ module.exports = function(io) {
             else {
               console.log("Successfully inserted.")
               board.find({},{}, function (e, docs) {
-                console.log(docs);
-                winchecker.check(docs);
+
+                var winResult = winchecker.check(docs, SuccessfulPlay);
               });
             };
           });
