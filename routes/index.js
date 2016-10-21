@@ -33,13 +33,12 @@ router.get('/',
     {
       for (var piece = 0; piece < docs.length; piece++)
       {
-        if (docs[piece].agent == 'Chrome')
-        {
-          var row = 5-(docs[piece].row);
-          var column = docs[piece].column;
-          if (column != undefined && row != undefined) {
-            gamedata[row][column].imgurl = '/images/icons/chrome.png';
-          }
+        var row = 5-(docs[piece].row);
+        var column = docs[piece].column;
+        if (column != undefined && row != undefined) {
+          gamedata[row][column].imgurl =
+          '/images/icons/' + docs[piece].agent.toLowerCase() + '.png';
+
         }
       } // for loop
         res.render('index',

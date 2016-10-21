@@ -4,13 +4,14 @@ module.exports = function(io) {
   var db = monk('localhost:27017/connect4');
   var board = db.get('gameboard');
   var winchecker = require('./winchecker.js');
+  var uaParser = require('ua-parser');
   io.sockets.on('connection', function (socket)
   {
-
+    var UserAgent = uaParser.parse(socket.request.headers['user-agent']);
     socket.on('play', function (data) {
       console.log('play: ' + data.column);
       // figure out which row this column gets.
-      if (data.column == undefined || data.column < -1 || data.column > 6) {
+      if (data.column == undefined || data.column < 0 || data.column > 6) {
         console.log('unable to drop.');
         return false;
       }
@@ -34,7 +35,7 @@ module.exports = function(io) {
           var SuccessfulPlay = {
             'row': insertRow,
             'column': data.column,
-            'agent': 'Chrome'
+            'agent': UserAgent.ua.family
           };
           board.insert(SuccessfulPlay, function (err, doc) {
             if (err) {

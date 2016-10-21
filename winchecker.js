@@ -36,15 +36,31 @@ exports.check = function (docs, newPiece) {
   var board = buildTo2D(docs, 7, 6);
   //check left
   var success = true;
-  var lastPiece = newPiece;
-  var winningPieces = [lastPiece];
+  var lastPiece = {
+    row: newPiece.row,
+    column: newPiece.column,
+    agent: newPiece.agent};
+
+  var winningPieces = [{
+    row: newPiece.row,
+    column: newPiece.column,
+    agent: newPiece.agent}];
+  console.log("winning pieces instantiate:");
+  console.log(winningPieces);
+
+  // check left;
   while (success === true && lastPiece.column > 0 && winningPieces.length < 5) {
-    console.log("checking left")
-    if (board[newPiece.row][lastPiece.column-1] === newPiece.agent)
+    var newCol = lastPiece.column - 1;
+    if (board[newPiece.row][newCol] === newPiece.agent)
     {
-      lastPiece.column--;
-      winningPieces.push(lastPiece);
-      console.log(winningPieces.length);
+      winningPieces.push({
+        row: newPiece.row,
+        column: newCol,
+        agent: newPiece.agent});
+
+      lastPiece.column = newCol;
+      console.log("winning pieces added left:");
+      console.log(winningPieces);
     }
     else { success = false; }
   }
@@ -57,12 +73,24 @@ exports.check = function (docs, newPiece) {
   }
   //check right
   success = true;
-  lastPiece = newPiece;
+  lastPiece = {
+    row: newPiece.row,
+    column: newPiece.column,
+    agent: newPiece.agent};
+
   while (success === true && lastPiece.column < 6 && winningPieces.length < 5) {
-    if (newPiece.agent === board[newPiece.row][lastPiece.column+1])
+    var newCol = lastPiece.column + 1;
+    if (newPiece.agent === board[newPiece.row][newCol])
     {
-      lastPiece.column++;
-      winningPieces.push(lastPiece);
+      winningPieces.push({
+        row: newPiece.row,
+        column: newCol,
+        agent: newPiece.agent});
+
+      console.log("winning pieces added right:");
+      console.log(winningPieces);
+
+      lastPiece.column = newCol;
     }
     else { success = false;}
   }
@@ -91,7 +119,7 @@ exports.check = function (docs, newPiece) {
       }
       else { success == false; }
     }
-    if (winningPieces.length >= 4)
+    if (winningPieces.length > 3)
     {
       console.log("WINNNER!!!");
       result.win = true;
@@ -100,6 +128,119 @@ exports.check = function (docs, newPiece) {
       return result;
     }
   }
+  //check diagonal. Top-Left to Bottom-right first.
+  success = true;
+  winningPieces = [{
+    row: newPiece.row,
+    column: newPiece.column,
+    agent: newPiece.agent}];
 
+  lastPiece = {
+    row: newPiece.row,
+    column: newPiece.column,
+    agent: newPiece.agent};
+
+  //top left.
+  while (success === true
+    && winningPieces.length < 4
+    && lastPiece.row < 5
+    && lastPiece.column > 0)
+  {
+    if (newPiece.agent === board[lastPiece.row+1][lastPiece.column-1]) {
+      lastPiece.row++;
+      lastPiece.column++;
+      winningPieces.push({row: lastPiece.row, column: lastPiece.row, agent: lastPiece.agent});
+    }
+    else { success = false; }
+  }
+
+  success = true;
+  lastPiece = {
+    row: newPiece.row,
+    column: newPiece.column,
+    agent: newPiece.agent};
+  while (success === true
+    && winningPieces.length < 4
+    && lastPiece.row > 0
+    && lastPiece.column < 6)
+  {
+    if (lastPiece.agent === board[lastPiece.row-1][lastPiece.column+1])
+    {
+      lastPiece.row--;
+      lastPiece.column++;
+      winningPieces.push({
+        row: lastPiece.row,
+        column: lastPiece.column,
+        agent: newPiece.agent});
+    }
+    else { success = false; }
+  }
+  if (winningPieces.length > 3)
+  {
+    console.log("WINNNER!!!");
+    result.win = true;
+    result.agent = newPiece.agent;
+    result.places = winningPieces;
+    return result;
+  }
+
+  //Check Diagonal. Top-right to Bottom-Left.
+  success = true;
+  winningPieces = [{
+    row: newPiece.row,
+    column: newPiece.column,
+    agent: newPiece.agent}];
+  lastPiece = {
+    row: newPiece.row,
+    column: newPiece.column,
+    agent: newPiece.agent};
+
+  while (success === true
+    && winningPieces.length < 4
+    && lastPiece.row < 5
+    && lastPiece.column < 6)
+  {
+    if (lastPiece.agent === board[lastPiece.row+1][lastPiece.column+1])
+    {
+      lastPiece.row++;
+      lastPiece.column++;
+      winningPieces.push({
+        row: lastPiece.row,
+        column: lastPiece.column,
+        agent: newPiece.agent});
+    }
+    else { success = false; }
+  }
+
+  success = true;
+  lastPiece = {
+    row: newPiece.row,
+    column: newPiece.column,
+    agent: newPiece.agent};
+
+  while (success === true
+    && winningPieces.length < 4
+    && lastPiece.row > 0
+    && lastPiece.column > 0)
+  {
+    if (lastPiece.agent === board[lastPiece.row-1][lastPiece.column-1])
+    {
+      lastPiece.row--;
+      lastPiece.column--;
+      winningPieces.push({
+        row: lastPiece.row,
+        column: lastPiece.column,
+        agent: newPiece.agent});
+    }
+    else { success = false; }
+  }
+  if (winningPieces.length > 3)
+  {
+    console.log("WINNNER!!!");
+    result.win = true;
+    result.agent = newPiece.agent;
+    result.places = winningPieces;
+    return result;
+  }
   return result;
 };
