@@ -1,33 +1,38 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
-  img(src='#{browserimagepath}', width='50', height='50')
-  table
-    tr
-      td Family
-      td #{useragent.ua.family}
-    tr
-      td OS
-      td #{useragent.os.family}
-
-  div
-  table(class='gameboard')
-    thead
+  //-
+    h1= title
+    p Welcome to #{title}
+  div(id='page')
+    table
       tr
-        each column, i in gamedata[0]
-          th
-            button(onclick='drop(#{i})') Drop
+        td
+          img(src='#{browserimagepath}', width='50', height='50')
+        td
+          table
+            tr
+              th(style='text-align: right') Family
+              td #{useragent.ua.family}
+            tr
+              th(style='text-align: right') OS
+              td #{useragent.os.family}
 
-    tbody
-      each row in gamedata
+    div
+      button(onclick='clearBoard()') Clear the board
+    table(class='gameboard')
+      thead
         tr
-          each column in row
-            td
-              img(src='#{column.imgurl}', width=100, height=100)
+          each column, i in gamedata[0]
+            th
+              button(onclick='drop(#{i})') Drop
 
-  button(onclick='clearBoard()') Clear the board
+      tbody
+        each row in gamedata
+          tr
+            each column in row
+              td
+                img(src='#{column.imgurl}', width=100, height=100)
 
 block js
   script(src='/javascripts/jquery-3.2.1.js')
