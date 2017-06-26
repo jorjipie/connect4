@@ -19,14 +19,11 @@ router.get('/',
     gamedata.push(row);
   }
   var agent = require('ua-parser').parse(req.headers['user-agent']);
-  if (agent.ua.family == 'Chrome')
-    { browserimagepath = '/images/icons/chrome.png'; }
-  else if (agent.ua.family == 'IE')
-    { browserimagepath = 'images/icons/ie.png'; }
-  else if (agent.ua.family == 'Opera')
-    { browserimagepath = 'images/icons/opera.png'; }
-  else if (agent.ua.family == 'Firefox')
-    { browserimagepath = 'images/icons/firefox.png'; }
+  var KnownAgents = ['Chrome', 'Safari', 'IE', 'Opera', 'Firefox'];
+  if (KnownAgents.includes(agent.ua.family))
+  {
+    browserimagepath = 'images/icons/' + agent.ua.family + '.png';
+  }
 
   req.db.get('gameboard').find({}, {},
     function(e, docs)
@@ -37,8 +34,7 @@ router.get('/',
         var column = docs[piece].column;
         if (column != undefined && row != undefined) {
           gamedata[row][column].imgurl =
-          '/images/icons/' + docs[piece].agent.toLowerCase() + '.png';
-
+          '/images/icons/' + docs[piece].agent + '.png';
         }
       } // for loop
         res.render('index',
