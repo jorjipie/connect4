@@ -9,12 +9,16 @@ socket.on('news', function (data) {
 socket.on('receivePlay', function (play) {
   var selector = ".gameboard tbody tr:nth-child(" + (6 - play.row) + ") td:nth-child(" + (play.column + 1) + ") img"
   var piece = $(selector);
-  if (play.agent === "Chrome") {
-    piece.attr('src', '/images/icons/chrome.png');
-  }
-  if (play.agent === "Opera") {
-    piece.attr('src', '/images/icons/opera.png');
-  }
+
+  piece.attr('src', '/images/icons/' + play.agent + '.png');
+  
+  piece.addClass('bounceInDown');
+  piece.addClass('animated');
+
+  setTimeout(function () {
+    piece.removeClass('bounceInDown');
+    piece.removeClass('animated');
+  }, 1000);
 
 });
 

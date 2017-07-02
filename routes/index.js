@@ -21,9 +21,7 @@ router.get('/',
   var agent = require('ua-parser').parse(req.headers['user-agent']);
   var KnownAgents = ['Chrome', 'Safari', 'IE', 'Opera', 'Firefox'];
   if (KnownAgents.includes(agent.ua.family))
-  {
-    browserimagepath = 'images/icons/' + agent.ua.family + '.png';
-  }
+  { browserimagepath = 'images/icons/' + agent.ua.family + '.png'; }
 
   req.db.get('gameboard').find({}, {},
     function(e, docs)
@@ -39,7 +37,7 @@ router.get('/',
       } // for loop
         res.render('index',
           {
-            title: 'Express',
+            title: 'Connect4',
             useragent: agent,
             browserimagepath: browserimagepath,
             'gamedata': gamedata
