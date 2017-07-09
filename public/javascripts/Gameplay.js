@@ -11,7 +11,7 @@ socket.on('receivePlay', function (play) {
   var piece = $(selector);
 
   piece.attr('src', '/images/icons/' + play.agent + '.png');
-  
+
   piece.addClass('bounceInDown');
   piece.addClass('animated');
 
@@ -20,6 +20,10 @@ socket.on('receivePlay', function (play) {
     piece.removeClass('animated');
   }, 1000);
 
+});
+socket.on('receiveWin', function (win) {
+  alert(win.agent + " wins!");
+  location.reload();  
 });
 
 function drop(col) {

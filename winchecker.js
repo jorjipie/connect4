@@ -117,7 +117,7 @@ exports.check = function (docs, newPiece) {
         lastPiece.row--;
         winningPieces.push(lastPiece);
       }
-      else { success == false; }
+      else { success = false; }
     }
     if (winningPieces.length > 3)
     {

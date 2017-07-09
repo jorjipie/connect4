@@ -101,6 +101,7 @@ router.post('/play', function(req,res) {
           {
             collection.find({}, {}, function (e, result) {
               win = winchecker.check(result);
+              console.log(win);
             });
             res.json(doc);
           }
@@ -110,6 +111,7 @@ router.post('/play', function(req,res) {
   );
 });
 router.post('/ClearTheBoard', function (req, res) {
+  console.log("A user requested to clear the board.");
   var board = req.db.get('gameboard');
   board.remove({}, function (err) {
     console.log(err);

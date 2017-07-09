@@ -46,6 +46,14 @@ module.exports = function(io) {
               board.find({},{}, function (e, docs) {
 
                 var winResult = winchecker.check(docs, SuccessfulPlay);
+                if (winResult.win) {
+                  //wait 5 seconds and clear the board.
+                  board.remove({}, function (err) {
+                    console.log(err);
+                  });
+                  io.emit('receiveWin', winResult);
+                }
+                console.log({"Title": "Win Result", "Value": winResult})
               });
             };
           });
